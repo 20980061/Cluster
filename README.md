@@ -1,12 +1,73 @@
 # Cluster Analysis for FC and IBDQ Data
 
+[![R](https://img.shields.io/badge/R-%3E%3D4.0-blue.svg)](https://www.r-project.org/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
 ## Overview
 
 This repository contains a comprehensive R script for performing clustering analysis on FC (Fecal Calprotectin) and IBDQ (Inflammatory Bowel Disease Questionnaire) data at baseline and induction timepoints.
 
-## Features
+## 📚 Quick Navigation
 
-### Clustering Methods Implemented
+- **[QUICKSTART.md](QUICKSTART.md)** - Get started in 3 steps (快速开始)
+- **[使用指南.md](使用指南.md)** - Complete Chinese user guide (完整中文指南)
+- **[METHODS_COMPARISON.md](METHODS_COMPARISON.md)** - Compare clustering methods (方法比较)
+- **[OUTPUT_GUIDE.md](OUTPUT_GUIDE.md)** - Interpret your results (结果解读)
+
+## 📚 Quick Navigation
+
+- **[QUICKSTART.md](QUICKSTART.md)** - Get started in 3 steps (快速开始)
+- **[使用指南.md](使用指南.md)** - Complete Chinese user guide (完整中文指南)
+- **[METHODS_COMPARISON.md](METHODS_COMPARISON.md)** - Compare clustering methods (方法比较)
+- **[OUTPUT_GUIDE.md](OUTPUT_GUIDE.md)** - Interpret your results (结果解读)
+
+## 🚀 Quick Start
+
+### Option 1: For Users (Recommended)
+
+```r
+# Step 1: Install packages
+source("setup_packages.R")
+
+# Step 2: Validate your data
+data <- read.csv("your_data.csv")
+source("validate_data.R")
+validate_data(data)
+
+# Step 3: Run analysis (after modifying clustering_analysis.R to load your data)
+source("clustering_analysis.R")
+```
+
+### Option 2: Test with Sample Data
+
+```r
+# Step 1: Install packages
+source("setup_packages.R")
+
+# Step 2: Test with sample data
+# Edit clustering_analysis.R line 32-48, replace with:
+# data_raw <- read.csv("sample_data.csv")
+
+# Step 3: Run analysis
+source("clustering_analysis.R")
+```
+
+## 📁 Repository Structure
+
+```
+Cluster/
+├── clustering_analysis.R      # Main analysis script (主分析脚本)
+├── setup_packages.R            # Package installation (包安装)
+├── validate_data.R             # Data validation (数据验证)
+├── sample_data.csv             # Sample data template (示例数据)
+├── QUICKSTART.md              # Quick start guide (快速开始)
+├── README.md                   # This file (English docs)
+├── 使用指南.md                 # Chinese user guide (中文指南)
+├── METHODS_COMPARISON.md       # Methods comparison (方法比较)
+└── OUTPUT_GUIDE.md            # Output interpretation (输出解读)
+```
+
+## ✨ Features
 
 The script implements 5 common clustering methods suitable for 2-variable clustering:
 
