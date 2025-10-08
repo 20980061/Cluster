@@ -1,6 +1,43 @@
 # Cluster Analysis with Pattern Visualization
 
+[![R](https://img.shields.io/badge/R-4.3+-blue.svg)](https://www.r-project.org/)
+[![Status](https://img.shields.io/badge/status-ready-brightgreen.svg)]()
+[![Lines](https://img.shields.io/badge/lines-2241-blue.svg)]()
+
+**创建一个类似图片的通用的模式变化图，展示个体标签从base到induc变化的比例**
+
 This repository contains R code for comprehensive clustering analysis with visualization of cluster label transitions from baseline to induction.
+
+![Example Alluvial Diagram](output/alluvial_transitions.png)
+
+## 🎯 Quick Start
+
+```r
+# Install R packages (first time only)
+install.packages(c("tidyverse", "ggplot2", "ggalluvial"))
+
+# Create alluvial diagram
+Rscript create_alluvial.R
+
+# Run example analysis
+Rscript example_usage.R
+
+# Full analysis with all methods
+Rscript Cluster.R
+```
+
+## 📊 Key Visualizations
+
+The scripts create beautiful **alluvial diagrams** (桑基图/Sankey diagrams) that show:
+- How individual patients move between clusters
+- Transition patterns from baseline to induction
+- Proportions visualized through flow width
+- Color-coded by baseline cluster
+
+**Alternative visualizations included:**
+- Heatmaps of transition matrices
+- Bar charts of pattern frequencies
+- Scatter plots of clustering results
 
 ## Overview
 
