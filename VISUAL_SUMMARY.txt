@@ -1,0 +1,134 @@
+════════════════════════════════════════════════════════════════════════════
+                     VISUAL OUTPUT SUMMARY
+════════════════════════════════════════════════════════════════════════════
+
+📊 MAIN VISUALIZATION: Alluvial Transition Diagram
+────────────────────────────────────────────────────────────────────────────
+
+File: output/alluvial_transitions.png (49 KB)
+
+Description: This heatmap-style visualization shows cluster transitions:
+
+            INDUCTION CLUSTERS →
+    B        ┌─────┬─────┬─────┐
+    A        │  1  │  2  │  3  │
+    S    ┌───┼─────┼─────┼─────┤
+    E    │ 1 │ 12  │ 12  │ 12  │
+    L    │   │(12%)│(12%)│(12%)│
+    I    ├───┼─────┼─────┼─────┤
+    N    │ 2 │ 11  │  9  │ 14  │
+    E    │   │(11%)│ (9%)│(14%)│
+    ↓    ├───┼─────┼─────┼─────┤
+         │ 3 │ 11  │  7  │ 12  │
+         │   │(11%)│ (7%)│(12%)│
+         └───┴─────┴─────┴─────┘
+
+    - Diagonal: Stable patients (same cluster at both timepoints)
+    - Off-diagonal: Patients who changed clusters
+    - Color intensity: Number of patients
+    - Numbers: Patient counts and percentages
+
+────────────────────────────────────────────────────────────────────────────
+
+📊 PATTERN FREQUENCY: Bar Chart
+────────────────────────────────────────────────────────────────────────────
+
+File: output/pattern_frequency.png (25 KB)
+
+Shows all transition patterns sorted by frequency:
+
+    Pattern  Count
+    ─────────────────
+    2→3       14  ████████████████
+    1→1       12  ██████████████
+    1→2       12  ██████████████
+    1→3       12  ██████████████
+    3→3       12  ██████████████
+    2→1       11  █████████████
+    3→1       11  █████████████
+    2→2        9  ███████████
+    3→2        7  ████████
+
+────────────────────────────────────────────────────────────────────────────
+
+📊 CLUSTERING SCATTER PLOTS
+────────────────────────────────────────────────────────────────────────────
+
+Files: 
+  - output/example_scatter_base.png (193 KB)
+  - output/example_scatter_induc.png (191 KB)
+
+Description: High-resolution scatter plots showing:
+  - X-axis: FC (log-transformed, standardized)
+  - Y-axis: IBDQ (standardized)
+  - Colors: Cluster assignments (1, 2, 3)
+  - Points: Individual patients
+  - Ellipses: Cluster boundaries (95% confidence)
+
+────────────────────────────────────────────────────────────────────────────
+
+📊 STATISTICS SUMMARY
+────────────────────────────────────────────────────────────────────────────
+
+File: output/transition_summary.txt (668 B)
+
+=== CLUSTER TRANSITION ANALYSIS ===
+
+Analysis Date: 2025-10-08
+
+Overall Statistics:
+  Total patients: 100
+  Stable patients: 33 (33.0%)
+  Changed clusters: 67 (67.0%)
+
+Transition Patterns:
+  Base Induc Freq Percentage Pattern
+  2    3     27         27   2 → 3
+  1    1     23         23   1 → 1
+  9    3     23         23   3 → 3
+  4    1      9          9   1 → 2
+  ...
+
+Transition Matrix:
+    Induction
+Base  1  2  3
+   1 23  9  7
+   2  1 27  6
+   3  1  3 23
+
+────────────────────────────────────────────────────────────────────────────
+
+📊 DATA OUTPUT
+────────────────────────────────────────────────────────────────────────────
+
+File: output/example_data_with_clusters.csv (22 KB)
+
+Contains:
+  - Original variables (ID, FC_base, FC_induc, IBDQ_base, IBDQ_induc, etc.)
+  - Transformed variables (log, standardized)
+  - Cluster assignments (cluster_base, cluster_induc)
+  - Pattern labels (e.g., "1→2", "2→3")
+  - Stability indicators (Stable/Changed)
+
+Sample rows:
+ID  cluster_base  cluster_induc  pattern  stability
+1   3             1              3→1      Changed
+2   3             1              3→1      Changed
+3   2             1              2→1      Changed
+4   3             1              3→1      Changed
+5   1             1              1→1      Stable
+...
+
+════════════════════════════════════════════════════════════════════════════
+
+🎨 VISUALIZATION QUALITY
+
+✓ High resolution (300 DPI for publications)
+✓ Color-coded for clarity
+✓ Professional formatting
+✓ Clear labels and legends
+✓ Grid lines for easy reading
+✓ Percentage annotations
+✓ Ready for publication or presentation
+
+════════════════════════════════════════════════════════════════════════════
