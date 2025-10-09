@@ -236,6 +236,120 @@ data_imputed$GMM_cluster_induc <- gmm_model_induc$classification
 data_imputed$GMM_cluster_base <- factor(data_imputed$GMM_cluster_base)
 data_imputed$GMM_cluster_induc <- factor(data_imputed$GMM_cluster_induc)
 
+## ==================== K-means聚类 ====================
+
+#=============== K-means聚类 - 基线期 (base) ===============
+
+# 使用肘部法则确定最佳聚类数K
+set.seed(123)
+wss_base <- numeric(10)
+for (k in 1:10) {
+  km_temp <- kmeans(clust_base, centers = k, nstart = 25, iter.max = 100)
+  wss_base[k] <- km_temp$tot.withinss
+}
+
+# 绘制肘部法则图
+png("Kmeans_Elbow_Method_base.png", width = 800, height = 600, res = 120)
+plot(1:10, wss_base, type = "b", pch = 19, 
+     xlab = "聚类数 K", 
+     ylab = "组内平方和 (WSS)",
+     main = "肘部法则 - 基线期K-means聚类",
+     col = "blue", lwd = 2)
+dev.off()
+
+# 根据肘部法则选择最优K值（这里选择K=4作为示例，可根据图形调整）
+optimal_k_base <- 4
+
+# 执行K-means聚类
+set.seed(123)
+kmeans_model_base <- kmeans(clust_base, centers = optimal_k_base, nstart = 25, iter.max = 100)
+
+# 保存聚类标签
+data_imputed$Kmeans_cluster_base <- kmeans_model_base$cluster
+
+# 查看聚类结果
+cat("\n=== K-means基线期聚类结果 ===\n")
+cat("聚类数:", optimal_k_base, "\n")
+cat("各类样本数:\n")
+print(table(data_imputed$Kmeans_cluster_base))
+cat("\n聚类中心:\n")
+print(kmeans_model_base$centers)
+
+# 绘制聚类散点图（前两个维度）
+png("Kmeans_Clusters_base.png", width = 800, height = 600, res = 120)
+plot(clust_base[, 1:2], 
+     col = kmeans_model_base$cluster,
+     pch = 19, 
+     main = "K-means聚类结果 - 基线期",
+     xlab = colnames(clust_base)[1],
+     ylab = colnames(clust_base)[2])
+points(kmeans_model_base$centers[, 1:2], col = 1:optimal_k_base, pch = 8, cex = 2, lwd = 2)
+legend("topright", legend = paste("Cluster", 1:optimal_k_base), 
+       col = 1:optimal_k_base, pch = 19, cex = 0.8)
+dev.off()
+
+#=============== K-means聚类 - 诱导期 (induc) ===============
+
+# 使用肘部法则确定最佳聚类数K
+set.seed(123)
+wss_induc <- numeric(10)
+for (k in 1:10) {
+  km_temp <- kmeans(clust_induc, centers = k, nstart = 25, iter.max = 100)
+  wss_induc[k] <- km_temp$tot.withinss
+}
+
+# 绘制肘部法则图
+png("Kmeans_Elbow_Method_induc.png", width = 800, height = 600, res = 120)
+plot(1:10, wss_induc, type = "b", pch = 19, 
+     xlab = "聚类数 K", 
+     ylab = "组内平方和 (WSS)",
+     main = "肘部法则 - 诱导期K-means聚类",
+     col = "blue", lwd = 2)
+dev.off()
+
+# 根据肘部法则选择最优K值（这里选择K=4作为示例，可根据图形调整）
+optimal_k_induc <- 4
+
+# 执行K-means聚类
+set.seed(123)
+kmeans_model_induc <- kmeans(clust_induc, centers = optimal_k_induc, nstart = 25, iter.max = 100)
+
+# 保存聚类标签
+data_imputed$Kmeans_cluster_induc <- kmeans_model_induc$cluster
+
+# 查看聚类结果
+cat("\n=== K-means诱导期聚类结果 ===\n")
+cat("聚类数:", optimal_k_induc, "\n")
+cat("各类样本数:\n")
+print(table(data_imputed$Kmeans_cluster_induc))
+cat("\n聚类中心:\n")
+print(kmeans_model_induc$centers)
+
+# 绘制聚类散点图（前两个维度）
+png("Kmeans_Clusters_induc.png", width = 800, height = 600, res = 120)
+plot(clust_induc[, 1:2], 
+     col = kmeans_model_induc$cluster,
+     pch = 19, 
+     main = "K-means聚类结果 - 诱导期",
+     xlab = colnames(clust_induc)[1],
+     ylab = colnames(clust_induc)[2])
+points(kmeans_model_induc$centers[, 1:2], col = 1:optimal_k_induc, pch = 8, cex = 2, lwd = 2)
+legend("topright", legend = paste("Cluster", 1:optimal_k_induc), 
+       col = 1:optimal_k_induc, pch = 19, cex = 0.8)
+dev.off()
+
+# 将K-means聚类标签转为因子
+data_imputed$Kmeans_cluster_base <- factor(data_imputed$Kmeans_cluster_base)
+data_imputed$Kmeans_cluster_induc <- factor(data_imputed$Kmeans_cluster_induc)
+
+cat("\n=== K-means聚类完成 ===\n")
+cat("基线期和诱导期的K-means聚类标签已保存到data_imputed中\n")
+cat("生成的文件:\n")
+cat("- Kmeans_Elbow_Method_base.png\n")
+cat("- Kmeans_Elbow_Method_induc.png\n")
+cat("- Kmeans_Clusters_base.png\n")
+cat("- Kmeans_Clusters_induc.png\n")
+
 # ==================================================================
 # 通用聚类汇总分析函数
 # ==================================================================
@@ -447,16 +561,19 @@ if(!require(ggalluvial)) install.packages("ggalluvial")
 library(ggalluvial)
 library(ggplot2)
 
-df$cluster_base <- as.factor(cluster_base)
-df$cluster_induc <- as.factor(cluster_induc)
+# 准备Sankey图数据
+# 注意: cluster_base 和 cluster_induc 是变量名（字符串），需要从data_imputed中获取实际列
+sankey_data <- data_imputed
+sankey_data$cluster_base_label <- data_imputed[[cluster_base]]
+sankey_data$cluster_induc_label <- data_imputed[[cluster_induc]]
 
-ggplot(df, aes(axis1 = cluster_base, axis2 = cluster_induc)) +
-  geom_alluvium(aes(fill = cluster_base), width = 1/12) +
+ggplot(sankey_data, aes(axis1 = cluster_base_label, axis2 = cluster_induc_label)) +
+  geom_alluvium(aes(fill = cluster_base_label), width = 1/12) +
   geom_stratum(width = 1/12, fill = "white", color = "black") +
   geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 5) +
-  scale_x_discrete(limits = c("cluster_base", "cluster_induc"),
+  scale_x_discrete(limits = c("cluster_base_label", "cluster_induc_label"),
                    labels = c("Clusters at baseline", "Clusters at induction")) +
-  labs(title = "Clusters from baseline to end of induction",
+  labs(title = paste0("Clusters from baseline to end of induction (", method_name, ")"),
        y = "Number of patients") +
   theme_minimal()
-ggsave("Sankey_Clusters.png", width = 8, height = 5, dpi = 300)
+ggsave(paste0("Sankey_Clusters_", method_name, ".png"), width = 8, height = 5, dpi = 300)
