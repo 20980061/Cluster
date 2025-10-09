@@ -62,7 +62,7 @@ data_test <- data.frame(
 head(data_test)
 
 options(repos = c(CRAN = "https://mirrors.tuna.tsinghua.edu.cn/CRAN/"))
-setwd("/workspaces/Cluster")
+setwd("D:/Rwork/cluster")
 
 
 #====================1.数据准备====================
@@ -80,7 +80,8 @@ required_packages <- c(
   "tableone",
   "RColorBrewer","gridExtra",
   "MASS","mclust", #GMM
-  "factoextra"
+  "factoextra",
+  "ggalluvial" #桑基图
 )
 #及时删除更新不必要的包
 
@@ -157,12 +158,12 @@ data_imputed$IBDQ_SF_induc_std <- scale(data_imputed$IBDQ_SF_induc)[,1]
 
 
 # 聚类变量组合
-#clust_base <- data_imputed[, c("FC_base_log", "IBDQ_TOTAL_base")]
-clust_base <- data_imputed[, c("FC_base_log", "IBDQ_BS_base_std","IBDQ_SS_base_std",
+#data_base <- data_imputed[, c("FC_base_log", "IBDQ_TOTAL_base")]
+data_base <- data_imputed[, c("FC_base_log", "IBDQ_BS_base_std","IBDQ_SS_base_std",
                                "IBDQ_EF_base_std","IBDQ_SF_base_std")]
 
-#clust_induc <- data_imputed[, c("FC_induc_log", "IBDQ_TOTAL_induc")]
-clust_induc <- data_imputed[, c("FC_induc_log","IBDQ_BS_induc_std","IBDQ_SS_induc_std",
+#data_induc <- data_imputed[, c("FC_induc_log", "IBDQ_TOTAL_induc")]
+data_induc <- data_imputed[, c("FC_induc_log","IBDQ_BS_induc_std","IBDQ_SS_induc_std",
                                 "IBDQ_EF_induc_std","IBDQ_SF_induc_std")]
 
 
@@ -176,7 +177,7 @@ plot(data_imputed$FC_base_log, data_imputed$IBDQ_TOTAL_base,
 ## ==================== GMM聚类 ====================
 #===============base
 # 选择需要进行聚类的变量
-gmm_base <- clust_base
+gmm_base <- data_base
 
 # 创建并拟合混合高斯模型
 gmm_model_base <- Mclust(gmm_base)
@@ -207,7 +208,7 @@ data_imputed$GMM_cluster_base <- gmm_model_base$classification
 
 #===============induc
 # 选择需要进行聚类的变量
-gmm_induc <- clust_induc
+gmm_induc <- data_induc
 
 # 创建并拟合混合高斯模型
 gmm_model_induc <- Mclust(gmm_induc)
@@ -244,6 +245,13 @@ data_imputed$GMM_cluster_induc <- factor(data_imputed$GMM_cluster_induc)
 cluster_base <- "GMM_cluster_base"   # 基线期聚类变量
 cluster_induc <- "GMM_cluster_induc" # 诱导期聚类变量
 method_name <- "GMM"                 # 聚类方法名称
+
+data_cluster <- data_imputed %>%
+  dplyr::select(
+    cluster_base = !!sym(cluster_base),
+    cluster_induc = !!sym(cluster_induc)
+  )
+
 
 # ============= 基线期聚类汇总分析 =============
 cluster_summary_base <- data_imputed %>%
@@ -442,21 +450,38 @@ cat(paste0("\n已保存", method_name, "聚类logistic回归结果:"))
 cat(paste0("\n- ", output_file))
 
 #============模式变化桑基图============
-# 安装并加载ggalluvial
-if(!require(ggalluvial)) install.packages("ggalluvial")
-library(ggalluvial)
-library(ggplot2)
+# 统计桑基流向数据
+sankey_data <- data_imputed %>%
+  dplyr::select(
+    cluster_base = !!rlang::sym(cluster_base),
+    cluster_induc = !!rlang::sym(cluster_induc)
+  ) %>%
+  dplyr::count(cluster_base, cluster_induc) %>%
+  dplyr::mutate(
+    cluster_base = as.factor(cluster_base),
+    cluster_induc = as.factor(cluster_induc)
+  )
 
-df$cluster_base <- as.factor(cluster_base)
-df$cluster_induc <- as.factor(cluster_induc)
+head(sankey_data)
 
-ggplot(df, aes(axis1 = cluster_base, axis2 = cluster_induc)) +
+ggplot(sankey_data, aes(y = n, axis1 = cluster_base, axis2 = cluster_induc)) +
   geom_alluvium(aes(fill = cluster_base), width = 1/12) +
-  geom_stratum(width = 1/12, fill = "white", color = "black") +
-  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 5) +
-  scale_x_discrete(limits = c("cluster_base", "cluster_induc"),
-                   labels = c("Clusters at baseline", "Clusters at induction")) +
-  labs(title = "Clusters from baseline to end of induction",
-       y = "Number of patients") +
-  theme_minimal()
-ggsave("Sankey_Clusters.png", width = 8, height = 5, dpi = 300)
+  geom_stratum(width = 1/8, fill = "white", color = "grey60", alpha = 0.9, size = 0.8) +
+  geom_label(stat = "stratum", aes(label = after_stat(stratum)), size = 4, fontface = "bold") +
+  scale_x_discrete(limits = c("cluster_base", "cluster_induc"), expand = c(0.05, 0.05)) +
+  scale_fill_manual(values = c(
+    "#E41A1C", "#377EBB", "#4DAF4A", "#984EA3", "#FF7F00"
+  )) +
+  labs(
+    title = "",
+    x = "Clusters from baseline to end of induction",
+    y = "Number of patients",
+    fill = "Clusters at baseline"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  )
+
+ggsave("sankey_", method_name, ".jpg", width = 8, height = 5, dpi = 300)
