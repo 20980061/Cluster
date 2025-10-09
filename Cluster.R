@@ -561,16 +561,19 @@ if(!require(ggalluvial)) install.packages("ggalluvial")
 library(ggalluvial)
 library(ggplot2)
 
-df$cluster_base <- as.factor(cluster_base)
-df$cluster_induc <- as.factor(cluster_induc)
+# 准备Sankey图数据
+# 注意: cluster_base 和 cluster_induc 是变量名（字符串），需要从data_imputed中获取实际列
+sankey_data <- data_imputed
+sankey_data$cluster_base_label <- data_imputed[[cluster_base]]
+sankey_data$cluster_induc_label <- data_imputed[[cluster_induc]]
 
-ggplot(df, aes(axis1 = cluster_base, axis2 = cluster_induc)) +
-  geom_alluvium(aes(fill = cluster_base), width = 1/12) +
+ggplot(sankey_data, aes(axis1 = cluster_base_label, axis2 = cluster_induc_label)) +
+  geom_alluvium(aes(fill = cluster_base_label), width = 1/12) +
   geom_stratum(width = 1/12, fill = "white", color = "black") +
   geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 5) +
-  scale_x_discrete(limits = c("cluster_base", "cluster_induc"),
+  scale_x_discrete(limits = c("cluster_base_label", "cluster_induc_label"),
                    labels = c("Clusters at baseline", "Clusters at induction")) +
-  labs(title = "Clusters from baseline to end of induction",
+  labs(title = paste0("Clusters from baseline to end of induction (", method_name, ")"),
        y = "Number of patients") +
   theme_minimal()
-ggsave("Sankey_Clusters.png", width = 8, height = 5, dpi = 300)
+ggsave(paste0("Sankey_Clusters_", method_name, ".png"), width = 8, height = 5, dpi = 300)
