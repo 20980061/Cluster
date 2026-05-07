@@ -1,0 +1,31 @@
+# R artifacts
+.Rhistory
+.RData
+.Rproj.user
+*.Rproj
+
+# R library directories
+R/library/
+packrat/
+renv/
+
+# Output files (keep example outputs, but ignore in production)
+# output/*.png
+# output/*.csv
+# output/*.txt
+
+# Temporary files
+*.tmp
+*.log
+.httr-oauth
+
+# System files
+.DS_Store
+Thumbs.db
+*~
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
